@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"runtime"
 	"sort"
 	"time"
 
@@ -74,6 +75,20 @@ func StdDevByn(nstudyResult [][]float64, colNum int) float64 {
 }
 
 func main() {
+
+	// Convert bytes to megabytes
+	bToMb := func(b uint64) uint64 { return b / 1024 / 1024 }
+
+	printMemUsage := func() {
+		var m runtime.MemStats
+		runtime.ReadMemStats(&m)
+		fmt.Printf("Alloc = %v MiB", bToMb(m.Alloc))
+		fmt.Printf("\tTotalAlloc = %v MiB", bToMb(m.TotalAlloc))
+		fmt.Printf("\tSys = %v MiB", bToMb(m.Sys))
+		fmt.Printf("\tNumGC = %v\n", m.NumGC)
+	}
+
+	printMemUsage()
 	start := time.Now()
 
 	B := 100
@@ -130,4 +145,5 @@ func main() {
 	fmt.Println("\n----- Run Complete -----")
 	elapsed := time.Since(start)
 	fmt.Printf("Elapsed time: %.2f seconds\n", elapsed.Seconds())
+	printMemUsage()
 }
